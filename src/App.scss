@@ -1,0 +1,11 @@
+@use "./styles/partials/variable" as *;
+@use "./styles/partials/mixin" as *;
+@use "./styles/partials/fonts";
+@use "./styles/partials/text";
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 0;
+    margin: 0;
+}
