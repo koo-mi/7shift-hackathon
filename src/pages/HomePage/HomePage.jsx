@@ -9,6 +9,7 @@ import plusIcon from "../../assets/icons/plus_icon.png";
 import checkMark from "../../assets/images/check_mark.svg";
 import alertIcon from "../../assets/icons/alert_octagon_icon.svg"
 import calculateHour from "../../utils/timeCalc.js";
+import formatDate from "../../utils/formatDate";
 
 const HomePage = () => {
     const [isFormVisible, setIsFormVisible] = useState(false);
@@ -69,19 +70,19 @@ const HomePage = () => {
                         <img className="icon__close" src={closeIcon} alt="close icon" onClick={() => { setIsCompleteVisible(false) }} />
                     </div>
 
-                    {/* Confirmation */}
-                    <div className="modal__confirmation">
-                        <h1>Confirmation</h1>
-                        <img className="modal__checkmark" src={checkMark} alt="confirmation image" />
-                        <p>
-                            Your shift incentive offer at: <br />
-                            <br />
-                            Sunday, December 25, 2022 <br />
-                            {start} - {end} <br />
-                            <br />
-                            Has been posted
-                        </p>
-                    </div>
+                        {/* Confirmation */}
+                        <div className="modal__confirmation">
+                            <h1>Confirmation</h1>
+                            <img className="modal__checkmark" src={checkMark} alt="confirmation image" />
+                            <p>
+                                Your shift incentive offer at: <br />
+                                <br />
+                                {formatDate(String(date))} <br />
+                                {start} - {end} <br />
+                                <br />
+                                Has been posted
+                            </p>
+                        </div>
 
                     {/* Button */}
                     <div className="modal__ok-button">
