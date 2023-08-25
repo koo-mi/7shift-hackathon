@@ -10,6 +10,10 @@
     margin: 0;
 }
 
+body {
+    position: relative;
+}
+
 .background {
     @include flex-center;
     width: 1280px;
@@ -20,6 +24,7 @@
 .modal {
     @include flex-column;
     width: 607px;
+    min-height: 500px;
     background-color: white;
     box-shadow: 0px 4px 4px rgba(0,0,0,0.25);
     padding: 26px 63px 24px 101px;
@@ -91,6 +96,43 @@
         & p {
             color: #51ACC7;
         }
+    }
+
+    &__complete {
+        @extend .modal;
+
+        padding: 24px 63px;
+    }
+
+    &__confirmation {
+        @include flex-column;
+        align-items: center;
+        gap: 27px;
+
+        &>h1 {
+            font-size: 48px;
+            font-weight: 600;
+            color: #555555;
+        }
+
+        & p {
+            text-align: center;
+        }
+
+    }
+
+    &__ok-button {
+        margin-top: 47px;
+        display: flex;
+        justify-content: flex-end;
+
+        > button {
+            width: 89px;
+        }
+    }
+
+    &__checkmark{
+        width: 176px;     
     }
 
 }

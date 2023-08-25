@@ -3,13 +3,15 @@ import "./HomePage.scss";
 import { useState } from "react";
 import { DateFilter, TimeRangeField, TimeField, Form, FormRow, FormFooter, Button, SelectField, TextAreaField } from "@7shifts/sous-chef";
 import closeIcon from "../../assets/icons/close_icon.png";
-import clockIcon from "../../assets/icons/clock_icon.png"
-import trashIcon from "../../assets/icons/trash_icon.png"
-import plusIcon from "../../assets/icons/plus_icon.png"
-import calculateHour from "../../utils/timeCalc.js"
+import clockIcon from "../../assets/icons/clock_icon.png";
+import trashIcon from "../../assets/icons/trash_icon.png";
+import plusIcon from "../../assets/icons/plus_icon.png";
+import checkMark from "../../assets/images/check_mark.svg";
+import calculateHour from "../../utils/timeCalc.js";
 
 const HomePage = () => {
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [isCompleteVisible, setIsCompleteVisible] = useState(false);
 
     // Setting date for DateFilter 
     const [date, setDate] = useState(new Date());
@@ -28,16 +30,61 @@ const HomePage = () => {
         }
     }
 
-    if (!isFormVisible) {
+    function submitHandler(e) {
+        e.preventDefault();
+
+        setIsFormVisible(false);
+        setIsCompleteVisible(true);
+    }
+
+    // Render Complete Page
+    if (isCompleteVisible) {
         return (
-            <div className="background">
-                <div className="click" onClick={() => { setIsFormVisible(true) }}></div>
-            </div>
+                <main className="background background--darker">
+                    <section className="modal__complete">
+                        {/* Close Button */}
+                        <div className="modal__header">
+                            <p></p>
+                            <img className="icon__close" src={closeIcon} alt="close icon" onClick={() => { setIsCompleteVisible(false) }} />
+                        </div>
+
+                        {/* Confirmation */}
+                        <div className="modal__confirmation">
+                            <h1>Confirmation</h1>
+                            <img className="modal__checkmark" src={checkMark} alt="confirmation image" />
+                            <p>
+                                Your shift incentive offer at: <br />
+                                <br />
+                                Sunday, December 25, 2022 <br />
+                                {start} - {end} <br />
+                                <br />
+                                Has been posted
+                            </p>
+                        </div>
+
+                        {/* Button */}
+                        <div className="modal__ok-button">
+                            <Button theme="primary" type="button" onClick={() => { setIsCompleteVisible(false) }}>
+                                OK
+                            </Button>
+                        </div>
+                    </section>
+                </main>
         )
     }
 
+    // Initial Page 
+    if (!isFormVisible) {
+        return (
+            <main className="background">
+                <div className="click" onClick={() => { setIsFormVisible(true) }}></div>
+            </main>
+        )
+    }
+
+    // Form Page
     return (
-        <div className="background">
+        <main className="background background--darker">
             <section className="modal">
                 <div className="modal__header">
                     <h2 className="modal__title">Header</h2>
@@ -117,29 +164,22 @@ const HomePage = () => {
 
                     {/* Row 4 - Incentive / Skill Level */}
                     <FormRow columns={3}>
-                        {/* Incentive */}
+
+                        {/* Role */}
                         <div className="modal__incentive">
                             <SelectField
-                                name="incentive"
-                                label="Incentive"
+                                name="role"
+                                label="Role"
                                 options={[
                                     {
-                                        label: '3 (Promotion)',
-                                        value: '3'
-                                    },
-                                    {
-                                        label: '2 (Something)',
-                                        value: '2'
-                                    },
-                                    {
-                                        label: '1 (Something)',
+                                        label: 'Chef',
                                         value: '1'
                                     },
+                                    {
+                                        label: 'Server',
+                                        value: '2'
+                                    }
                                 ]}
-                            // value={{
-                            //     label: '3 (Promotion)',
-                            //     value: '3'
-                            // }}
                             />
                         </div>
 
@@ -162,10 +202,28 @@ const HomePage = () => {
                                         value: '3'
                                     },
                                 ]}
-                            // value={{
-                            //     label: '1 (Beginner)',
-                            //     value: '1'
-                            // }}
+                            />
+                        </div>
+
+                        {/* Incentive */}
+                        <div className="modal__incentive">
+                            <SelectField
+                                name="incentive"
+                                label="Incentive"
+                                options={[
+                                    {
+                                        label: '3 (Promotion)',
+                                        value: '3'
+                                    },
+                                    {
+                                        label: '2 (Something)',
+                                        value: '2'
+                                    },
+                                    {
+                                        label: '1 (Something)',
+                                        value: '1'
+                                    },
+                                ]}
                             />
                         </div>
                     </FormRow>
@@ -187,13 +245,13 @@ const HomePage = () => {
                         <Button onClick={() => { setIsFormVisible(false) }} theme="default">
                             Cancel
                         </Button>
-                        <Button onClick={() => { }} theme="primary">
+                        <Button type="submit" onClick={submitHandler} theme="primary">
                             Save
                         </Button>
                     </FormFooter>
                 </Form>
             </section>
-        </div>
+        </main>
     );
 };
 
