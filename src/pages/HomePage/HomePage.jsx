@@ -7,7 +7,9 @@ import clockIcon from "../../assets/icons/clock_icon.png";
 import trashIcon from "../../assets/icons/trash_icon.png";
 import plusIcon from "../../assets/icons/plus_icon.png";
 import checkMark from "../../assets/images/check_mark.svg";
+
 import calculateHour from "../../utils/timeCalc.js";
+import formatDate from "../../utils/formatDate";
 
 const HomePage = () => {
     const [isFormVisible, setIsFormVisible] = useState(false);
@@ -19,6 +21,7 @@ const HomePage = () => {
     // Setting start/end time for TimeRangeField
     const [start, setStart] = useState("9:00 AM");
     const [end, setEnd] = useState("9:00 AM");
+
 
     // On change for TimeRangeField
     function handleTimeRange(e) {
@@ -55,7 +58,7 @@ const HomePage = () => {
                             <p>
                                 Your shift incentive offer at: <br />
                                 <br />
-                                Sunday, December 25, 2022 <br />
+                                {formatDate(String(date))} <br />
                                 {start} - {end} <br />
                                 <br />
                                 Has been posted
