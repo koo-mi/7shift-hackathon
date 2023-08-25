@@ -10,7 +10,7 @@
     margin: 0;
 }
 
-body {
+#root {
     position: relative;
 }
 
@@ -19,10 +19,23 @@ body {
     width: 1280px;
     height: 832px;
     background: url(./assets/images/website-background.svg);
+
+    &--darker::after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 50%;
+            top: 0;
+        }
 }
 
 .modal {
     @include flex-column;
+    position: relative;
+    z-index: 10;
     width: 607px;
     min-height: 500px;
     background-color: white;
@@ -42,6 +55,15 @@ body {
 
     &__row1 {
         padding-top: 19px;
+    }
+
+    &__total-hours {
+        color: #E76767;
+    }
+
+    &__time-error {
+        padding-left: 0.5rem;
+        color: #E76767;
     }
 
     &__common-shift {
@@ -135,6 +157,10 @@ body {
         width: 176px;     
     }
 
+    &__error {
+        color: red;
+    }
+
 }
 
 
@@ -156,6 +182,10 @@ body {
 
     &__plus {
         width: 14px;
+    }
+
+    &__alert {
+        margin-left: 2rem;
     }
 }
 

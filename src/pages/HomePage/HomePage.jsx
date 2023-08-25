@@ -1,17 +1,21 @@
 import "./HomePage.scss";
-
 import { useState } from "react";
 import { DateFilter, TimeRangeField, TimeField, Form, FormRow, FormFooter, Button, SelectField, TextAreaField } from "@7shifts/sous-chef";
 import closeIcon from "../../assets/icons/close_icon.png";
 import clockIcon from "../../assets/icons/clock_icon.png";
+import clockIconRed from "../../assets/icons/clock_icon_red.svg";
 import trashIcon from "../../assets/icons/trash_icon.png";
 import plusIcon from "../../assets/icons/plus_icon.png";
 import checkMark from "../../assets/images/check_mark.svg";
+import alertIcon from "../../assets/icons/alert_octagon_icon.svg"
 import calculateHour from "../../utils/timeCalc.js";
 
 const HomePage = () => {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [isCompleteVisible, setIsCompleteVisible] = useState(false);
+
+    const [isValid, setIsValid] = useState(true);
+    const [dayInvalid, setDayInvalid] = useState(false);
 
     // Setting date for DateFilter 
     const [date, setDate] = useState(new Date());
@@ -19,6 +23,12 @@ const HomePage = () => {
     // Setting start/end time for TimeRangeField
     const [start, setStart] = useState("9:00 AM");
     const [end, setEnd] = useState("9:00 AM");
+
+    // For select options
+    const [breaks, setBreaks] = useState({ label: "", value: "" });
+    const [role, setRole] = useState({ label: "", value: "" });
+    const [level, setLevel] = useState({ label: "", value: "" });
+    const [incentive, setIncentive] = useState({ label: "", value: "" });
 
     // On change for TimeRangeField
     function handleTimeRange(e) {
@@ -30,46 +40,57 @@ const HomePage = () => {
         }
     }
 
+    // when click save button
     function submitHandler(e) {
         e.preventDefault();
+
+        // Validate if it's empty
+        if (!role.value || !level.value || !incentive.value) {
+            return setIsValid(false);
+        }
 
         setIsFormVisible(false);
         setIsCompleteVisible(true);
     }
 
+    function checkHour() {
+        return (calculateHour(start, end) < 3 || calculateHour(start, end) > 12)
+    }
+
+
     // Render Complete Page
     if (isCompleteVisible) {
         return (
-                <main className="background background--darker">
-                    <section className="modal__complete">
-                        {/* Close Button */}
-                        <div className="modal__header">
-                            <p></p>
-                            <img className="icon__close" src={closeIcon} alt="close icon" onClick={() => { setIsCompleteVisible(false) }} />
-                        </div>
+            <main className="background background--darker">
+                <section className="modal__complete">
+                    {/* Close Button */}
+                    <div className="modal__header">
+                        <p></p>
+                        <img className="icon__close" src={closeIcon} alt="close icon" onClick={() => { setIsCompleteVisible(false) }} />
+                    </div>
 
-                        {/* Confirmation */}
-                        <div className="modal__confirmation">
-                            <h1>Confirmation</h1>
-                            <img className="modal__checkmark" src={checkMark} alt="confirmation image" />
-                            <p>
-                                Your shift incentive offer at: <br />
-                                <br />
-                                Sunday, December 25, 2022 <br />
-                                {start} - {end} <br />
-                                <br />
-                                Has been posted
-                            </p>
-                        </div>
+                    {/* Confirmation */}
+                    <div className="modal__confirmation">
+                        <h1>Confirmation</h1>
+                        <img className="modal__checkmark" src={checkMark} alt="confirmation image" />
+                        <p>
+                            Your shift incentive offer at: <br />
+                            <br />
+                            Sunday, December 25, 2022 <br />
+                            {start} - {end} <br />
+                            <br />
+                            Has been posted
+                        </p>
+                    </div>
 
-                        {/* Button */}
-                        <div className="modal__ok-button">
-                            <Button theme="primary" type="button" onClick={() => { setIsCompleteVisible(false) }}>
-                                OK
-                            </Button>
-                        </div>
-                    </section>
-                </main>
+                    {/* Button */}
+                    <div className="modal__ok-button">
+                        <Button theme="primary" type="button" onClick={() => { setIsCompleteVisible(false) }}>
+                            OK
+                        </Button>
+                    </div>
+                </section>
+            </main>
         )
     }
 
@@ -87,21 +108,39 @@ const HomePage = () => {
         <main className="background background--darker">
             <section className="modal">
                 <div className="modal__header">
-                    <h2 className="modal__title">Header</h2>
+                    <h2 className="modal__title">Post Shift Incentive</h2>
                     <img className="icon__close" src={closeIcon} alt="close icon" onClick={() => { setIsFormVisible(false) }} />
                 </div>
 
                 <DateFilter value={date} onChange={setDate} />
-
                 <Form>
                     {/* Row 1 - Time */}
                     <FormRow>
                         <div className="modal__row1">
-                            <TimeRangeField name="time_range" interval={30} onChange={handleTimeRange} startTime="9:00 AM" value={{ start, end }} placeholder="9:00 AM" />
+                            <TimeRangeField name="time_range" interval={30} startTime="9:00 AM" placeholder="9:00 AM" value={{ start, end }} onChange={handleTimeRange} />
                             <div className="modal__common-shift">
                                 <a className="modal__common-shift-link">or use common shift times</a>
-                                <img className="icon__clock" src={clockIcon} alt="clock icon" />
-                                <p className="modal__total-hours">{calculateHour(start, end)} Hours</p>
+                                {
+                                    checkHour() ?
+                                        <img className="icon__clock" src={clockIconRed} alt="clock icon" />
+                                        :
+                                        <img className="icon__clock" src={clockIcon} alt="clock icon" />
+                                }
+                                <p className={checkHour() ? "modal__total-hours" : ""}>{calculateHour(start, end)} Hours</p>
+                                {
+                                    calculateHour(start, end) < 3 &&
+                                    <>
+                                        <img className="icon__alert" src={alertIcon} alt="alert icon" />
+                                        <p className="modal__time-error">Too few hours</p>
+                                    </>
+                                }
+                                {
+                                    calculateHour(start, end) > 12 &&
+                                    <>
+                                         <img className="icon__alert" src={alertIcon} alt="alert icon" />
+                                        <p className="modal__time-error">Too many hours</p>
+                                    </>
+                                }
                             </div>
                         </div>
                     </FormRow>
@@ -112,8 +151,8 @@ const HomePage = () => {
                             <SelectField
                                 label="Breaks"
                                 name="breaks"
-                                onBlur={function noRefCheck() { }}
-                                onChange={function noRefCheck() { }}
+                                error={(isValid || Boolean(breaks.value))
+                                    ? "" : "Required"}
                                 options={[
                                     {
                                         label: 'Unpaid Meal Break - 30 min',
@@ -127,10 +166,7 @@ const HomePage = () => {
                                         label: 'Paid Meal Break - 15 min',
                                         value: '15'
                                     }]}
-                            // value={{
-                            //     label: 'Unpaid Meal Break - 30 min',
-                            //     value: '30'
-                            // }}
+                                onChange={(e) => { setBreaks(e) }}
                             />
                         </div>
 
@@ -141,14 +177,8 @@ const HomePage = () => {
 
                             </div>
                             <TimeField
+                                name="break_time"
                                 interval={30}
-                                onBlur={function noRefCheck() { }}
-                                onChange={function noRefCheck() { }}
-                                onClick={function noRefCheck() { }}
-                                onFocus={function noRefCheck() { }}
-                                onKeyDown={function noRefCheck() { }}
-                                onMouseEnter={function noRefCheck() { }}
-                                onMouseLeave={function noRefCheck() { }}
                             />
                             <img className="icon__trash" src={trashIcon} alt="delete icon" />
                         </div>
@@ -170,6 +200,8 @@ const HomePage = () => {
                             <SelectField
                                 name="role"
                                 label="Role"
+                                error={(isValid || Boolean(role.value))
+                                    ? "" : "Required"}
                                 options={[
                                     {
                                         label: 'Chef',
@@ -180,6 +212,7 @@ const HomePage = () => {
                                         value: '2'
                                     }
                                 ]}
+                                onChange={(e) => { setRole(e) }}
                             />
                         </div>
 
@@ -188,6 +221,8 @@ const HomePage = () => {
                             <SelectField
                                 name="skill_level"
                                 label="Skill Level"
+                                error={(isValid || Boolean(level.value))
+                                    ? "" : "Required"}
                                 options={[
                                     {
                                         label: '1 (Beginner)',
@@ -202,6 +237,7 @@ const HomePage = () => {
                                         value: '3'
                                     },
                                 ]}
+                                onChange={(e) => { setLevel(e) }}
                             />
                         </div>
 
@@ -210,20 +246,30 @@ const HomePage = () => {
                             <SelectField
                                 name="incentive"
                                 label="Incentive"
+                                error={(isValid || Boolean(incentive.value))
+                                    ? "" : "Required"}
                                 options={[
                                     {
-                                        label: '3 (Promotion)',
-                                        value: '3'
+                                        label: '1',
+                                        value: '1'
                                     },
                                     {
-                                        label: '2 (Something)',
+                                        label: '2',
                                         value: '2'
                                     },
                                     {
-                                        label: '1 (Something)',
-                                        value: '1'
+                                        label: '3',
+                                        value: '3'
+                                    }, {
+                                        label: '4',
+                                        value: '4'
+                                    },
+                                    {
+                                        label: '5',
+                                        value: '5'
                                     },
                                 ]}
+                                onChange={(e) => { setIncentive(e) }}
                             />
                         </div>
                     </FormRow>
@@ -232,10 +278,9 @@ const HomePage = () => {
                     <FormRow>
                         <div className="modal__text-area">
                             <TextAreaField
+                                name="notes"
                                 caption="Let the employee know any important details about this shift."
                                 label="Shift notes"
-                                onBlur={function noRefCheck() { }}
-                                onChange={function noRefCheck() { }}
                             />
                         </div>
                     </FormRow>
