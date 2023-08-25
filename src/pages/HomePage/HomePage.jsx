@@ -16,7 +16,6 @@ const HomePage = () => {
     const [isCompleteVisible, setIsCompleteVisible] = useState(false);
 
     const [isValid, setIsValid] = useState(true);
-    const [dayInvalid, setDayInvalid] = useState(false);
 
     // Setting date for DateFilter 
     const [date, setDate] = useState(new Date());
